@@ -1,5 +1,12 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, useColorScheme } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  useColorScheme,
+  Image,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Colors } from '../constants/Colors';
 
@@ -13,12 +20,24 @@ export default function LoginScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: Colors[theme].background }]}>
-      <Text style={[styles.title, { color: Colors[theme].text }]}>Willkommen zur App</Text>
+      <Image
+        source={require('../assets/Icon App.png')}
+        style={styles.logo}
+        resizeMode="contain"
+      />
+      <Text style={[styles.title, { color: Colors[theme].text }]}>
+        Willkommen bei
+      </Text>
+      <Text style={[styles.subtitle, { color: Colors[theme].primary }]}>
+        RateMyMensa
+      </Text>
+
       <TouchableOpacity
         style={[styles.button, { backgroundColor: Colors[theme].primary }]}
         onPress={handleLoginPress}
+        activeOpacity={0.8}
       >
-        <Text style={[styles.buttonText, { color: '#fff' }]}>Login</Text>
+        <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
     </View>
   );
@@ -29,21 +48,39 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    padding: 32,
+  },
+  logo: {
+    width: 200,
+    height: 200,
+    marginBottom: 20,
   },
   title: {
     fontSize: 24,
+    fontWeight: '500',
+    marginBottom: 4,
+    textAlign: 'center',
+  },
+  subtitle: {
+    fontSize: 32,
     fontWeight: 'bold',
-    marginBottom: 24,
+    marginBottom: 32,
+    textAlign: 'center',
   },
   button: {
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 8,
+    paddingVertical: 14,
+    paddingHorizontal: 40,
+    borderRadius: 12,
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 5,
   },
   buttonText: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '600',
+    color: '#fff',
   },
 });

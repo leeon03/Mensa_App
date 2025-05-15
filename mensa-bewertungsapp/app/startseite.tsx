@@ -1,7 +1,16 @@
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import React from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  Platform,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { useColorScheme } from 'react-native';
 import { Colors } from '../constants/Colors';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function HomeScreen() {
   const theme = useColorScheme() || 'light';
@@ -9,32 +18,36 @@ export default function HomeScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: Colors[theme].background }]}>
-      <Image
-        source={require('../assets/mensa-icon.png')} // <-- ersetze ggf. durch dein eigenes Icon
-        style={styles.logo}
-        resizeMode="contain"
-      />
-      <Text style={[styles.title, { color: Colors[theme].primary }]}>
-        🍽️ Mensa Bewertungs-App
-      </Text>
-      <Text style={[styles.subtitle, { color: Colors[theme].text }]}>
-        Entdecke, bewerte und diskutiere dein Mensa-Essen.
-      </Text>
+      <View style={styles.header}>
+        <Image
+          source={require('../assets/AppLogo.png')}
+          style={styles.logo}
+          resizeMode="contain"
+        />
+        <Text style={[styles.title, { color: Colors[theme].primary }]}>
+          🍽️ Mensa Bewertungs-App
+        </Text>
+        <Text style={[styles.subtitle, { color: Colors[theme].text }]}>
+          Entdecke, bewerte und diskutiere dein Mensa-Essen.
+        </Text>
+      </View>
 
       <View style={styles.buttonContainer}>
         <PrimaryButton
-          label="📅 Speiseplan ansehen"
+          icon="calendar-outline"
+          label="Speiseplan ansehen"
           color={Colors[theme].primary}
           onPress={() => router.push('/speiseplan')}
         />
         <PrimaryButton
-          label="🍽️ Heute in der Mensa"
+          icon="restaurant-outline"
+          label="Heute in der Mensa"
           color={Colors[theme].secondary}
           onPress={() => router.push('/heute')}
         />
-  
         <PrimaryButton
-          label="❤️ Essens-Tinder"
+          icon="heart-outline"
+          label="Essens-Tinder"
           color="#d62828"
           onPress={() => router.push('/tinder')}
         />
@@ -43,13 +56,24 @@ export default function HomeScreen() {
   );
 }
 
-function PrimaryButton({ label, onPress, color }: { label: string; onPress: () => void; color: string }) {
+function PrimaryButton({
+  label,
+  icon,
+  onPress,
+  color,
+}: {
+  label: string;
+  icon: keyof typeof Ionicons.glyphMap;
+  onPress: () => void;
+  color: string;
+}) {
   return (
     <TouchableOpacity
       style={[styles.button, { backgroundColor: color }]}
       onPress={onPress}
       activeOpacity={0.85}
     >
+      <Ionicons name={icon} size={20} color="#fff" style={styles.buttonIcon} />
       <Text style={styles.buttonText}>{label}</Text>
     </TouchableOpacity>
   );
@@ -61,38 +85,47 @@ const styles = StyleSheet.create({
     padding: 24,
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 12,
+    gap: 24,
+  },
+  header: {
+    alignItems: 'center',
+    marginBottom: 32,
   },
   logo: {
-    width: 100,
-    height: 100,
-    marginBottom: 16,
+    width: 120,
+    height: 120,
+    marginBottom: 12,
   },
   title: {
-    fontSize: 26,
+    fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 6,
     textAlign: 'center',
+    marginBottom: 6,
   },
   subtitle: {
-    fontSize: 15,
-    marginBottom: 20,
+    fontSize: 16,
     textAlign: 'center',
     maxWidth: 320,
+    color: '#666',
   },
   buttonContainer: {
     width: '100%',
-    gap: 14,
+    gap: 16,
   },
   button: {
-    paddingVertical: 14,
-    paddingHorizontal: 18,
-    borderRadius: 12,
+    flexDirection: 'row',
     alignItems: 'center',
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    borderRadius: 14,
+    justifyContent: 'center',
     shadowColor: '#000',
     shadowOpacity: 0.08,
-    shadowRadius: 5,
-    elevation: 2,
+    shadowRadius: 4,
+    elevation: Platform.OS === 'android' ? 2 : 0,
+  },
+  buttonIcon: {
+    marginRight: 10,
   },
   buttonText: {
     color: '#fff',
@@ -100,5 +133,3 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
-
-
