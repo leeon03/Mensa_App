@@ -1,7 +1,13 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  useColorScheme,
+  Image,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useColorScheme } from 'react-native';
 import { Colors } from '../constants/Colors';
 
 export default function Login() {
@@ -12,10 +18,22 @@ export default function Login() {
     navigation.navigate(option);
   };
 
+  const logoSource =
+    theme === 'dark'
+      ? require('../assets/AppLogoDarkmode.png')
+      : require('../assets/AppLogo.png');
+
   return (
     <View style={[styles.container, { backgroundColor: Colors[theme].background }]}>
+      <Image
+        source={logoSource}
+        style={styles.logo}
+        resizeMode="contain"
+      />
       <Text style={[styles.title, { color: Colors[theme].primary }]}>Willkommen</Text>
-      <Text style={[styles.subtitle, { color: Colors[theme].text }]}>Wähle eine Option zum Fortfahren</Text>
+      <Text style={[styles.subtitle, { color: Colors[theme].text }]}>
+        Wähle eine Option zum Fortfahren
+      </Text>
 
       <TouchableOpacity
         style={[styles.button, { backgroundColor: Colors[theme].primary }]}
@@ -48,6 +66,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 24,
     gap: 12,
+  },
+  logo: {
+    width: 180,
+    height: 180,
+    marginBottom: 32,
   },
   title: {
     fontSize: 28,
