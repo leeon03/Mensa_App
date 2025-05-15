@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { useColorScheme } from 'react-native';
 import { Colors } from '../constants/Colors';
+import * as Haptics from 'expo-haptics'; // ✅ Haptics importiert
 
 export default function RegisterScreen() {
   const theme = useColorScheme() || 'light';
@@ -25,6 +26,8 @@ export default function RegisterScreen() {
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
   const handleRegister = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); // ✅ Haptik bei Button-Tap
+
     if (!firstName || !lastName || !email || !password || !confirmPassword) {
       Alert.alert('Fehler', 'Bitte fülle alle Felder aus.');
       return;
@@ -33,13 +36,15 @@ export default function RegisterScreen() {
       Alert.alert('Fehler', 'Die Passwörter stimmen nicht überein.');
       return;
     }
+
     console.log('Registrierung erfolgreich:', {
       firstName,
       lastName,
       email,
       password,
     });
-    // Hier kannst du eine API-Aufruf einbauen
+
+    // Hier kannst du z. B. Navigation oder API-Aufruf einbauen
   };
 
   return (

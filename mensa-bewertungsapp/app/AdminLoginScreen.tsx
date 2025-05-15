@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { useColorScheme } from 'react-native';
 import { Colors } from '../constants/Colors';
+import * as Haptics from 'expo-haptics'; // ✅ Haptics importieren
 
 export default function AdminLoginScreen() {
   const theme = useColorScheme() || 'light';
@@ -23,12 +24,15 @@ export default function AdminLoginScreen() {
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
   const handleLogin = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); // ✅ Haptik auslösen
+
     if (!email || !password || !adminCode) {
       Alert.alert('Fehler', 'Bitte alle Felder ausfüllen.');
       return;
     }
+
     console.log('Admin-Login:', { email, password, adminCode });
-    // Hier kommt die Admin-Login-Logik (z. B. mit Rollenprüfung)
+    // Hier kommt deine API/Validierung etc.
   };
 
   return (
@@ -125,7 +129,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   buttonText: {
-    color: '#000', // gut lesbar auf gelbem Hintergrund
+    color: '#000',
     fontWeight: '600',
     fontSize: 16,
   },

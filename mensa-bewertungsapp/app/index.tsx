@@ -9,12 +9,14 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Colors } from '../constants/Colors';
+import * as Haptics from 'expo-haptics'; // ✅ Haptics importiert
 
 export default function LoginScreen() {
   const theme = useColorScheme() || 'light';
   const navigation = useNavigation();
 
   const handleOption = (option: string) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); // ✅ Haptik hinzugefügt
     navigation.navigate(option);
   };
 
@@ -99,6 +101,6 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#fff', // Immer weiß
+    color: '#fff',
   },
 });

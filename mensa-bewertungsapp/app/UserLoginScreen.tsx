@@ -13,6 +13,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { useColorScheme } from 'react-native';
 import { Colors } from '../constants/Colors';
+import * as Haptics from 'expo-haptics'; // ✅ Haptics importiert
 
 export default function UserLoginScreen() {
   const theme = useColorScheme() || 'light';
@@ -25,10 +26,13 @@ export default function UserLoginScreen() {
   const [passwordFocused, setPasswordFocused] = useState(false);
 
   const handleLogin = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); // ✅ Haptisches Feedback
+
     if (!email || !password) {
       Alert.alert('Fehler', 'Bitte E-Mail und Passwort eingeben.');
       return;
     }
+
     console.log('Benutzer-Login:', { email, password });
     navigation.navigate('startseite');
   };
