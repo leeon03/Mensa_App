@@ -1,0 +1,112 @@
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { useColorScheme } from 'react-native';
+import { Colors } from '../constants/Colors';
+
+export default function UserLoginScreen() {
+  const theme = useColorScheme() || 'light';
+  const navigation = useNavigation();
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLogin = () => {
+    if (!email || !password) {
+      Alert.alert('Fehler', 'Bitte E-Mail und Passwort eingeben.');
+      return;
+    }
+    console.log('Benutzer-Login:', { email, password });
+    navigation.navigate('startseite');
+  };
+
+  return (
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+      <ScrollView
+        contentContainerStyle={[styles.container, { backgroundColor: Colors[theme].background }]}
+        keyboardShouldPersistTaps="handled"
+      >
+        <Text style={[styles.title, { color: Colors[theme].primary }]}>Benutzer Login</Text>
+
+        <TextInput
+          style={[styles.input, {
+            backgroundColor: Colors[theme].surface,
+            color: Colors[theme].text,
+            borderColor: Colors[theme].icon,
+          }]}
+          placeholder="E-Mail"
+          placeholderTextColor={Colors[theme].icon}
+          keyboardType="email-address"
+          autoCapitalize="none"
+          value={email}
+          onChangeText={setEmail}
+        />
+
+        <TextInput
+          style={[styles.input, {
+            backgroundColor: Colors[theme].surface,
+            color: Colors[theme].text,
+            borderColor: Colors[theme].icon,
+          }]}
+          placeholder="Passwort"
+          placeholderTextColor={Colors[theme].icon}
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
+        />
+
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: Colors[theme].primary }]}
+          onPress={handleLogin}
+        >
+          <Text style={styles.buttonText}>Einloggen</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </KeyboardAvoidingView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    padding: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 24,
+    textAlign: 'center',
+  },
+  input: {
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 16,
+    marginBottom: 12,
+  },
+  button: {
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 16,
+  },
+});

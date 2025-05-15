@@ -1,14 +1,14 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { useColorScheme } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, useColorScheme } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { Colors } from '../constants/Colors';
 
 export default function LoginScreen() {
   const theme = useColorScheme() || 'light';
+  const navigation = useNavigation();
 
-  const handleLogin = () => {
-    // Hier kommt deine Login-Logik hin
-    console.log('Login gedrückt');
+  const handleLoginPress = () => {
+    navigation.navigate('login');
   };
 
   return (
@@ -16,7 +16,7 @@ export default function LoginScreen() {
       <Text style={[styles.title, { color: Colors[theme].text }]}>Willkommen zur App</Text>
       <TouchableOpacity
         style={[styles.button, { backgroundColor: Colors[theme].primary }]}
-        onPress={handleLogin}
+        onPress={handleLoginPress}
       >
         <Text style={[styles.buttonText, { color: '#fff' }]}>Login</Text>
       </TouchableOpacity>
