@@ -3,6 +3,7 @@ import { View, TouchableOpacity, StyleSheet, Animated } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useColorScheme } from 'react-native';
 import { Colors } from '../constants/Colors';
+import * as Haptics from 'expo-haptics'; // ✅ Haptics importieren
 
 type Props = {
   value: number;
@@ -13,7 +14,6 @@ type Props = {
 export default function RatingStars({ value, editable = false, onChange }: Props) {
   const theme = useColorScheme() || 'light';
 
-  // Für Animation: Ein Array von 5 scale-Werten
   const scales = React.useRef(
     Array.from({ length: 5 }, () => new Animated.Value(1))
   ).current;
@@ -35,6 +35,10 @@ export default function RatingStars({ value, editable = false, onChange }: Props
 
   const handlePress = (index: number) => {
     if (!editable) return;
+
+    // ✅ Haptisches Feedback
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
     if (onChange) onChange(index + 1);
     bounce(index);
   };
