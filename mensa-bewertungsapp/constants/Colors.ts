@@ -1,5 +1,5 @@
 const tintColorLight = '#2E8B57';
-const tintColorDark = '#6FCF97';
+const tintColorDark = '#2E8B57'; // Gleich wie Light Mode, damit Farben konsistent bleiben
 
 export const Colors = {
   light: {
@@ -18,10 +18,10 @@ export const Colors = {
   dark: {
     background: '#121212',
     text: '#F1F1F1',
-    primary: '#6FCF97',
-    secondary: '#E9A86B',
-    accent: '#88C0D0',
-    danger: '#EF4444',
+    primary: '#2E8B57', // Gleich wie Light Mode
+    secondary: '#F4A261',
+    accent: '#264653',
+    danger: '#E76F51',
     icon: '#BBBBBB',
     surface: '#1E1E1E',
     card: '#1F1F1F',

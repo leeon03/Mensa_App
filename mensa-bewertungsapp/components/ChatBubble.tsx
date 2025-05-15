@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import RatingStars from './RatingStars';
+import { useColorScheme } from 'react-native';
+import { Colors } from '../constants/Colors';
 
 type Props = {
   user: string;
@@ -9,18 +11,19 @@ type Props = {
 };
 
 export default function ChatBubble({ user, text, stars }: Props) {
+  const theme = useColorScheme() || 'light';
+
   return (
-    <View style={styles.bubble}>
-      <Text style={styles.user}>{user} sagt:</Text>
+    <View style={[styles.bubble, { backgroundColor: Colors[theme].surface }]}>
+      <Text style={[styles.user, { color: Colors[theme].text }]}>{user} sagt:</Text>
       <RatingStars value={stars} editable={false} />
-      <Text style={styles.text}>{text}</Text>
+      <Text style={[styles.text, { color: Colors[theme].text }]}>{text}</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   bubble: {
-    backgroundColor: '#f1f1f1',
     padding: 12,
     borderRadius: 10,
     marginBottom: 10,
