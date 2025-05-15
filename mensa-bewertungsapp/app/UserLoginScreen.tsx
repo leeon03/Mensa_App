@@ -21,6 +21,9 @@ export default function UserLoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const [emailFocused, setEmailFocused] = useState(false);
+  const [passwordFocused, setPasswordFocused] = useState(false);
+
   const handleLogin = () => {
     if (!email || !password) {
       Alert.alert('Fehler', 'Bitte E-Mail und Passwort eingeben.');
@@ -49,7 +52,7 @@ export default function UserLoginScreen() {
             {
               backgroundColor: Colors[theme].surface,
               color: Colors[theme].text,
-              borderColor: Colors[theme].icon,
+              borderColor: emailFocused ? '#63a53d' : Colors[theme].icon,
             },
           ]}
           placeholder="E-Mail"
@@ -58,6 +61,8 @@ export default function UserLoginScreen() {
           autoCapitalize="none"
           value={email}
           onChangeText={setEmail}
+          onFocus={() => setEmailFocused(true)}
+          onBlur={() => setEmailFocused(false)}
         />
 
         <TextInput
@@ -66,7 +71,7 @@ export default function UserLoginScreen() {
             {
               backgroundColor: Colors[theme].surface,
               color: Colors[theme].text,
-              borderColor: Colors[theme].icon,
+              borderColor: passwordFocused ? '#63a53d' : Colors[theme].icon,
             },
           ]}
           placeholder="Passwort"
@@ -74,6 +79,8 @@ export default function UserLoginScreen() {
           secureTextEntry
           value={password}
           onChangeText={setPassword}
+          onFocus={() => setPasswordFocused(true)}
+          onBlur={() => setPasswordFocused(false)}
         />
 
         <TouchableOpacity

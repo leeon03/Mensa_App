@@ -22,6 +22,8 @@ export default function RegisterScreen() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
+  const [focusedField, setFocusedField] = useState<string | null>(null);
+
   const handleRegister = () => {
     if (!firstName || !lastName || !email || !password || !confirmPassword) {
       Alert.alert('Fehler', 'Bitte fülle alle Felder aus.');
@@ -45,40 +47,45 @@ export default function RegisterScreen() {
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <ScrollView contentContainerStyle={[styles.container, { backgroundColor: Colors[theme].background }]}
+      <ScrollView
+        contentContainerStyle={[styles.container, { backgroundColor: Colors[theme].background }]}
         keyboardShouldPersistTaps="handled"
       >
-        <Text style={[styles.title, { color: Colors[theme].primary }]}>Registrieren</Text>
+        <Text style={[styles.title, { color: '#fb8d30' }]}>Registrieren</Text>
 
         <TextInput
           style={[styles.input, {
             backgroundColor: Colors[theme].surface,
             color: Colors[theme].text,
-            borderColor: Colors[theme].icon,
+            borderColor: focusedField === 'firstName' ? '#fb8d30' : Colors[theme].icon,
           }]}
           placeholder="Vorname"
           placeholderTextColor={Colors[theme].icon}
           value={firstName}
           onChangeText={setFirstName}
+          onFocus={() => setFocusedField('firstName')}
+          onBlur={() => setFocusedField(null)}
         />
 
         <TextInput
           style={[styles.input, {
             backgroundColor: Colors[theme].surface,
             color: Colors[theme].text,
-            borderColor: Colors[theme].icon,
+            borderColor: focusedField === 'lastName' ? '#fb8d30' : Colors[theme].icon,
           }]}
           placeholder="Nachname"
           placeholderTextColor={Colors[theme].icon}
           value={lastName}
           onChangeText={setLastName}
+          onFocus={() => setFocusedField('lastName')}
+          onBlur={() => setFocusedField(null)}
         />
 
         <TextInput
           style={[styles.input, {
             backgroundColor: Colors[theme].surface,
             color: Colors[theme].text,
-            borderColor: Colors[theme].icon,
+            borderColor: focusedField === 'email' ? '#fb8d30' : Colors[theme].icon,
           }]}
           placeholder="E-Mail"
           placeholderTextColor={Colors[theme].icon}
@@ -86,36 +93,42 @@ export default function RegisterScreen() {
           autoCapitalize="none"
           value={email}
           onChangeText={setEmail}
+          onFocus={() => setFocusedField('email')}
+          onBlur={() => setFocusedField(null)}
         />
 
         <TextInput
           style={[styles.input, {
             backgroundColor: Colors[theme].surface,
             color: Colors[theme].text,
-            borderColor: Colors[theme].icon,
+            borderColor: focusedField === 'password' ? '#fb8d30' : Colors[theme].icon,
           }]}
           placeholder="Passwort"
           placeholderTextColor={Colors[theme].icon}
           secureTextEntry
           value={password}
           onChangeText={setPassword}
+          onFocus={() => setFocusedField('password')}
+          onBlur={() => setFocusedField(null)}
         />
 
         <TextInput
           style={[styles.input, {
             backgroundColor: Colors[theme].surface,
             color: Colors[theme].text,
-            borderColor: Colors[theme].icon,
+            borderColor: focusedField === 'confirmPassword' ? '#fb8d30' : Colors[theme].icon,
           }]}
           placeholder="Passwort wiederholen"
           placeholderTextColor={Colors[theme].icon}
           secureTextEntry
           value={confirmPassword}
           onChangeText={setConfirmPassword}
+          onFocus={() => setFocusedField('confirmPassword')}
+          onBlur={() => setFocusedField(null)}
         />
 
         <TouchableOpacity
-          style={[styles.button, { backgroundColor: Colors[theme].primary }]}
+          style={[styles.button, { backgroundColor: '#fb8d30' }]}
           onPress={handleRegister}
         >
           <Text style={styles.buttonText}>Registrieren</Text>

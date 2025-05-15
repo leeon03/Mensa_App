@@ -16,19 +16,24 @@ export default function HomeScreen() {
   const theme = useColorScheme() || 'light';
   const router = useRouter();
 
+  const logoSource =
+    theme === 'dark'
+      ? require('../assets/AppLogoDarkmode.png')
+      : require('../assets/AppLogo.png');
+
   return (
     <View style={[styles.container, { backgroundColor: Colors[theme].background }]}>
       <View style={styles.header}>
         <Image
-          source={require('../assets/AppLogo.png')}
+          source={logoSource}
           style={styles.logo}
           resizeMode="contain"
         />
         <Text style={[styles.title, { color: Colors[theme].primary }]}>
-          🍽️ Mensa Bewertungs-App
+          RateMyMensa
         </Text>
         <Text style={[styles.subtitle, { color: Colors[theme].text }]}>
-          Entdecke, bewerte und diskutiere dein Mensa-Essen.
+          Speisepläne checken, Gerichte bewerten, Favoriten speichern – deine Mensa, dein Geschmack.
         </Text>
       </View>
 
@@ -36,19 +41,19 @@ export default function HomeScreen() {
         <PrimaryButton
           icon="calendar-outline"
           label="Speiseplan ansehen"
-          color={Colors[theme].primary}
+          color="#63a53d"
           onPress={() => router.push('/speiseplan')}
         />
         <PrimaryButton
           icon="restaurant-outline"
           label="Heute in der Mensa"
-          color={Colors[theme].secondary}
+          color="#fb8d30"
           onPress={() => router.push('/heute')}
         />
         <PrimaryButton
           icon="heart-outline"
           label="Essens-Tinder"
-          color="#d62828"
+          color="#fdc128"
           onPress={() => router.push('/tinder')}
         />
       </View>
@@ -89,23 +94,25 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    marginBottom: 32,
+    marginBottom: 36,
   },
   logo: {
-    width: 120,
-    height: 120,
-    marginBottom: 12,
+    width: 160,
+    height: 160,
+    marginBottom: 16,
   },
   title: {
-    fontSize: 28,
-    fontWeight: 'bold',
+    fontSize: 32,
+    fontWeight: '800',
     textAlign: 'center',
-    marginBottom: 6,
+    marginBottom: 10,
+    letterSpacing: 0.5,
   },
   subtitle: {
     fontSize: 16,
     textAlign: 'center',
-    maxWidth: 320,
+    maxWidth: 340,
+    lineHeight: 22,
     color: '#666',
   },
   buttonContainer: {

@@ -99,6 +99,6 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#000',
+     color: '#fff', // <-- Jetzt immer weiß
   },
 });

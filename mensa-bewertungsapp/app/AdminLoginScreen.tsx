@@ -20,6 +20,8 @@ export default function AdminLoginScreen() {
   const [password, setPassword] = useState('');
   const [adminCode, setAdminCode] = useState('');
 
+  const [focusedField, setFocusedField] = useState<string | null>(null);
+
   const handleLogin = () => {
     if (!email || !password || !adminCode) {
       Alert.alert('Fehler', 'Bitte alle Felder ausfüllen.');
@@ -38,13 +40,13 @@ export default function AdminLoginScreen() {
         contentContainerStyle={[styles.container, { backgroundColor: Colors[theme].background }]}
         keyboardShouldPersistTaps="handled"
       >
-        <Text style={[styles.title, { color: Colors[theme].primary }]}>Admin Login</Text>
+        <Text style={[styles.title, { color: '#fdc128' }]}>Admin Login</Text>
 
         <TextInput
           style={[styles.input, {
             backgroundColor: Colors[theme].surface,
             color: Colors[theme].text,
-            borderColor: Colors[theme].icon,
+            borderColor: focusedField === 'email' ? '#fdc128' : Colors[theme].icon,
           }]}
           placeholder="Admin-E-Mail"
           placeholderTextColor={Colors[theme].icon}
@@ -52,36 +54,42 @@ export default function AdminLoginScreen() {
           autoCapitalize="none"
           value={email}
           onChangeText={setEmail}
+          onFocus={() => setFocusedField('email')}
+          onBlur={() => setFocusedField(null)}
         />
 
         <TextInput
           style={[styles.input, {
             backgroundColor: Colors[theme].surface,
             color: Colors[theme].text,
-            borderColor: Colors[theme].icon,
+            borderColor: focusedField === 'password' ? '#fdc128' : Colors[theme].icon,
           }]}
           placeholder="Passwort"
           placeholderTextColor={Colors[theme].icon}
           secureTextEntry
           value={password}
           onChangeText={setPassword}
+          onFocus={() => setFocusedField('password')}
+          onBlur={() => setFocusedField(null)}
         />
 
         <TextInput
           style={[styles.input, {
             backgroundColor: Colors[theme].surface,
             color: Colors[theme].text,
-            borderColor: Colors[theme].icon,
+            borderColor: focusedField === 'adminCode' ? '#fdc128' : Colors[theme].icon,
           }]}
           placeholder="Admin-Code"
           placeholderTextColor={Colors[theme].icon}
           secureTextEntry
           value={adminCode}
           onChangeText={setAdminCode}
+          onFocus={() => setFocusedField('adminCode')}
+          onBlur={() => setFocusedField(null)}
         />
 
         <TouchableOpacity
-          style={[styles.button, { backgroundColor: Colors[theme].accent }]}
+          style={[styles.button, { backgroundColor: '#fdc128' }]}
           onPress={handleLogin}
         >
           <Text style={styles.buttonText}>Einloggen</Text>
@@ -117,7 +125,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   buttonText: {
-    color: '#fff',
+    color: '#000', // gut lesbar auf gelbem Hintergrund
     fontWeight: '600',
     fontSize: 16,
   },
