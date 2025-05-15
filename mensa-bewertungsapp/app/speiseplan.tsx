@@ -85,7 +85,7 @@ export default function SpeiseplanScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: Colors[theme].background }]}>
-      <Text style={[styles.title, { color: Colors[theme].primary }]}>📋 Speiseplan</Text>
+      <Text style={[styles.title, { color: Colors[theme].accent1 }]}>📋 Speiseplan</Text>
 
       <View style={styles.weekHeader}>
         <TouchableOpacity onPress={() => changeWeek('prev')}>
@@ -106,7 +106,7 @@ export default function SpeiseplanScreen() {
             onPress={() => setSelectedDate(day)}
             style={[styles.dayButton, {
               backgroundColor: isSameDay(day, selectedDate)
-                ? Colors[theme].primary
+                ? Colors[theme].accent1
                 : Colors[theme].surface,
             }]}
           >
@@ -141,7 +141,7 @@ export default function SpeiseplanScreen() {
                 onChange={handleDateChange}
               />
               <TouchableOpacity onPress={() => setShowDatePicker(false)} style={styles.doneButton}>
-                <Text style={[styles.doneText, { color: Colors[theme].primary }]}>Fertig</Text>
+                <Text style={[styles.doneText, { color: Colors[theme].accent1 }]}>Fertig</Text>
               </TouchableOpacity>
             </View>
           </View>

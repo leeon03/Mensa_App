@@ -14,11 +14,15 @@ export const Colors = {
     card: '#f1f1f1',
     tabIconDefault: '#ccc',
     tabIconSelected: tintColorLight,
+
+    accent1: '#63a53d', // Benutzer Login
+    accent2: '#fb8d30', // Registrierung
+    accent3: '#fdc128', // Admin Login
   },
   dark: {
     background: '#121212',
     text: '#F1F1F1',
-    primary: '#2E8B57', // Gleich wie Light Mode
+    primary: '#2E8B57',
     secondary: '#F4A261',
     accent: '#264653',
     danger: '#E76F51',
@@ -27,5 +31,9 @@ export const Colors = {
     card: '#1F1F1F',
     tabIconDefault: '#777777',
     tabIconSelected: tintColorDark,
+
+    accent1: '#63a53d', // Benutzer Login
+    accent2: '#fb8d30', // Registrierung
+    accent3: '#fdc128', // Admin Login
   },
 };

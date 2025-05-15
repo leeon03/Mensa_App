@@ -41,19 +41,19 @@ export default function HomeScreen() {
         <PrimaryButton
           icon="calendar-outline"
           label="Speiseplan ansehen"
-          color="#63a53d"
+          color={Colors[theme].accent1}
           onPress={() => router.push('/speiseplan')}
         />
         <PrimaryButton
           icon="restaurant-outline"
           label="Heute in der Mensa"
-          color="#fb8d30"
+          color={Colors[theme].accent2}
           onPress={() => router.push('/heute')}
         />
         <PrimaryButton
           icon="heart-outline"
           label="Essens-Tinder"
-          color="#fdc128"
+          color={Colors[theme].accent3}
           onPress={() => router.push('/tinder')}
         />
       </View>

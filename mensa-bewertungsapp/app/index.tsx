@@ -32,21 +32,21 @@ export default function LoginScreen() {
 
       <View style={styles.buttonContainer}>
         <TouchableOpacity
-          style={[styles.button, { backgroundColor: '#63a53d' }]}
+          style={[styles.button, { backgroundColor: Colors[theme].accent1 }]}
           onPress={() => handleOption('UserLoginScreen')}
         >
           <Text style={styles.buttonText}>🔑 Benutzer Login</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.button, { backgroundColor: '#fb8d30' }]}
+          style={[styles.button, { backgroundColor: Colors[theme].accent2 }]}
           onPress={() => handleOption('RegisterScreen')}
         >
           <Text style={styles.buttonText}>📝 Neu registrieren</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.button, { backgroundColor: '#fdc128' }]}
+          style={[styles.button, { backgroundColor: Colors[theme].accent3 }]}
           onPress={() => handleOption('AdminLoginScreen')}
         >
           <Text style={styles.buttonText}>🛠️ Admin Login</Text>
@@ -99,6 +99,6 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 16,
     fontWeight: '600',
-     color: '#fff', // <-- Jetzt immer weiß
+    color: '#fff', // Immer weiß
   },
 });
