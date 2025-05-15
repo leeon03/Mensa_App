@@ -23,9 +23,9 @@ export default function HeuteScreen() {
     <ScrollView style={[styles.container, { backgroundColor: Colors[theme].background }]}>
       <Text style={[styles.title, { color: Colors[theme].primary }]}>🍽️ Heute in der Mensa</Text>
 
-      <View style={styles.gerichtBox}>
+      <View style={[styles.gerichtBox, { backgroundColor: Colors[theme].surface }]}>
         <Text style={[styles.gerichtName, { color: Colors[theme].text }]}>{gericht.name}</Text>
-        <Text style={{ color: Colors[theme].text }}>{gericht.beschreibung}</Text>
+        <Text style={[styles.gerichtBeschreibung, { color: Colors[theme].text }]}>{gericht.beschreibung}</Text>
         <RatingStars value={gericht.bewertung} />
       </View>
 
@@ -34,7 +34,6 @@ export default function HeuteScreen() {
         <KommentarBox onSubmit={(data) => console.log(data)} />
       </View>
 
-      {/* 👉 HIER kommt dein Kommentarblock mit Sternen rein */}
       <View style={styles.section}>
         <Text style={[styles.sectionTitle, { color: Colors[theme].text }]}>💬 Kommentare</Text>
         {gericht.kommentare.map((kommentar) => (
@@ -64,13 +63,16 @@ const styles = StyleSheet.create({
   gerichtBox: {
     marginBottom: 28,
     padding: 16,
-    backgroundColor: '#f2f2f2',
     borderRadius: 10,
   },
   gerichtName: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 4,
+    fontSize: 20,
+    fontWeight: '700',
+    marginBottom: 6,
+  },
+  gerichtBeschreibung: {
+    fontSize: 16,
+    marginBottom: 8,
   },
   section: {
     marginBottom: 28,
