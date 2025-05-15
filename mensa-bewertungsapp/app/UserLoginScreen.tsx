@@ -39,14 +39,19 @@ export default function UserLoginScreen() {
         contentContainerStyle={[styles.container, { backgroundColor: Colors[theme].background }]}
         keyboardShouldPersistTaps="handled"
       >
-        <Text style={[styles.title, { color: Colors[theme].primary }]}>Benutzer Login</Text>
+        <Text style={[styles.title, { color: '#63a53d' }]}>
+          Benutzer Login
+        </Text>
 
         <TextInput
-          style={[styles.input, {
-            backgroundColor: Colors[theme].surface,
-            color: Colors[theme].text,
-            borderColor: Colors[theme].icon,
-          }]}
+          style={[
+            styles.input,
+            {
+              backgroundColor: Colors[theme].surface,
+              color: Colors[theme].text,
+              borderColor: Colors[theme].icon,
+            },
+          ]}
           placeholder="E-Mail"
           placeholderTextColor={Colors[theme].icon}
           keyboardType="email-address"
@@ -56,11 +61,14 @@ export default function UserLoginScreen() {
         />
 
         <TextInput
-          style={[styles.input, {
-            backgroundColor: Colors[theme].surface,
-            color: Colors[theme].text,
-            borderColor: Colors[theme].icon,
-          }]}
+          style={[
+            styles.input,
+            {
+              backgroundColor: Colors[theme].surface,
+              color: Colors[theme].text,
+              borderColor: Colors[theme].icon,
+            },
+          ]}
           placeholder="Passwort"
           placeholderTextColor={Colors[theme].icon}
           secureTextEntry
@@ -69,7 +77,7 @@ export default function UserLoginScreen() {
         />
 
         <TouchableOpacity
-          style={[styles.button, { backgroundColor: Colors[theme].primary }]}
+          style={[styles.button, { backgroundColor: '#63a53d' }]}
           onPress={handleLogin}
         >
           <Text style={styles.buttonText}>Einloggen</Text>
