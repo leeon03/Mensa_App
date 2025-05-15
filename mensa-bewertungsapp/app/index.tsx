@@ -21,7 +21,7 @@ export default function LoginScreen() {
   return (
     <View style={[styles.container, { backgroundColor: Colors[theme].background }]}>
       <Image
-        source={require('../assets/Icon App.png')}
+        source={require('../assets/AppLogo.png')}
         style={styles.logo}
         resizeMode="contain"
       />
