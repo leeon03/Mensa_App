@@ -1,8 +1,7 @@
-import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Colors } from '../constants/Colors';
 import { useColorScheme } from 'react-native';
+import { Colors } from '../constants/Colors';
 
 export default function HomeScreen() {
   const theme = useColorScheme() || 'light';
@@ -11,33 +10,53 @@ export default function HomeScreen() {
   return (
     <View style={[styles.container, { backgroundColor: Colors[theme].background }]}>
       <Image
-        source={require('../assets/mensa-icon.png')}
+        source={require('../assets/mensa-icon.png')} // <-- ersetze ggf. durch dein eigenes Icon
         style={styles.logo}
         resizeMode="contain"
       />
       <Text style={[styles.title, { color: Colors[theme].primary }]}>
-        🍽️ Willkommen in der Mensa-App
+        🍽️ Mensa Bewertungs-App
       </Text>
       <Text style={[styles.subtitle, { color: Colors[theme].text }]}>
-        Finde deinen Speiseplan & bewerte die Mensa
+        Entdecke, bewerte und diskutiere dein Mensa-Essen.
       </Text>
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={[styles.button, { backgroundColor: Colors[theme].primary }]}
+        <PrimaryButton
+          label="📅 Speiseplan ansehen"
+          color={Colors[theme].primary}
           onPress={() => router.push('/speiseplan')}
-        >
-          <Text style={styles.buttonText}>📋 Speiseplan ansehen</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.button, { backgroundColor: Colors[theme].secondary }]}
-          onPress={() => router.push('/bewerten')}
-        >
-          <Text style={styles.buttonText}>⭐ Bewertung abgeben</Text>
-        </TouchableOpacity>
+        />
+        <PrimaryButton
+          label="🍽️ Heute in der Mensa"
+          color={Colors[theme].secondary}
+          onPress={() => router.push('/heute')}
+        />
+  
+        <PrimaryButton
+          label="❤️ Essens-Tinder"
+          color="#d62828"
+          onPress={() => router.push('/tinder')}
+        />
+        <PrimaryButton
+          label="🔐 Login / Admin"
+          color={Colors[theme].text}
+          onPress={() => router.push('/login')}
+        />
       </View>
     </View>
+  );
+}
+
+function PrimaryButton({ label, onPress, color }: { label: string; onPress: () => void; color: string }) {
+  return (
+    <TouchableOpacity
+      style={[styles.button, { backgroundColor: color }]}
+      onPress={onPress}
+      activeOpacity={0.85}
+    >
+      <Text style={styles.buttonText}>{label}</Text>
+    </TouchableOpacity>
   );
 }
 
@@ -47,42 +66,42 @@ const styles = StyleSheet.create({
     padding: 24,
     justifyContent: 'center',
     alignItems: 'center',
+    gap: 12,
   },
   logo: {
-    width: 120,
-    height: 120,
-    marginBottom: 24,
+    width: 100,
+    height: 100,
+    marginBottom: 16,
   },
   title: {
     fontSize: 26,
     fontWeight: 'bold',
-    marginBottom: 12,
+    marginBottom: 6,
     textAlign: 'center',
   },
   subtitle: {
-    fontSize: 16,
-    marginBottom: 32,
+    fontSize: 15,
+    marginBottom: 20,
     textAlign: 'center',
-    paddingHorizontal: 10,
+    maxWidth: 320,
   },
   buttonContainer: {
     width: '100%',
-    gap: 16,
+    gap: 14,
   },
   button: {
     paddingVertical: 14,
-    paddingHorizontal: 20,
+    paddingHorizontal: 18,
     borderRadius: 12,
     alignItems: 'center',
-    marginBottom: 12,
     shadowColor: '#000',
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.08,
     shadowRadius: 5,
-    elevation: 3,
+    elevation: 2,
   },
   buttonText: {
     color: '#fff',
-    fontSize: 16,
     fontWeight: '600',
+    fontSize: 16,
   },
 });
