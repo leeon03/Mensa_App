@@ -8,7 +8,7 @@ import {
   Image,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Colors } from '../constants/Colors';
+import { Colors } from '../constants/Colors'; // Achte darauf, dass Colors richtig importiert ist
 
 export default function LoginScreen() {
   const theme = useColorScheme() || 'light';
@@ -18,10 +18,15 @@ export default function LoginScreen() {
     navigation.navigate('login');
   };
 
+  const logoSource =
+    theme === 'dark'
+      ? require('../assets/AppLogoDarkmode.png')
+      : require('../assets/AppLogo.png');
+
   return (
     <View style={[styles.container, { backgroundColor: Colors[theme].background }]}>
       <Image
-        source={require('../assets/AppLogo.png')}
+        source={logoSource}
         style={styles.logo}
         resizeMode="contain"
       />
@@ -46,41 +51,34 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
-    padding: 32,
+    justifyContent: 'center',
+    paddingHorizontal: 24,
   },
   logo: {
     width: 200,
     height: 200,
-    marginBottom: 20,
+    marginBottom: 40,
   },
   title: {
     fontSize: 24,
-    fontWeight: '500',
-    marginBottom: 4,
-    textAlign: 'center',
+    fontWeight: '600',
+    marginBottom: 8,
   },
   subtitle: {
     fontSize: 32,
     fontWeight: 'bold',
-    marginBottom: 32,
-    textAlign: 'center',
+    marginBottom: 40,
   },
   button: {
-    paddingVertical: 14,
-    paddingHorizontal: 40,
-    borderRadius: 12,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-    elevation: 5,
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 8,
   },
   buttonText: {
+    color: '#fff',
     fontSize: 18,
     fontWeight: '600',
-    color: '#fff',
+    textAlign: 'center',
   },
 });
