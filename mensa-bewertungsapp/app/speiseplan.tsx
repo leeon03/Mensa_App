@@ -15,7 +15,6 @@ import RatingStars from '../components/RatingStars';
 import { Ionicons } from '@expo/vector-icons';
 import {
   addDays,
-  subDays,
   startOfWeek,
   format,
   isSameDay,
@@ -50,14 +49,9 @@ export default function SpeiseplanScreen() {
   const [alerts, setAlerts] = useState<Record<number, boolean>>({});
 
   const startOfCurrentWeek = startOfWeek(selectedDate, { weekStartsOn: 1 });
-  const daysOfWeek = Array.from({ length: 5 }, (_, i) =>
-    addDays(startOfCurrentWeek, i)
-  );
+  const daysOfWeek = Array.from({ length: 5 }, (_, i) => addDays(startOfCurrentWeek, i));
 
-  const weekLabel = `${format(
-    daysOfWeek[0],
-    'dd.MM.yyyy'
-  )} - ${format(daysOfWeek[4], 'dd.MM.yyyy')}`;
+  const weekLabel = `${format(daysOfWeek[0], 'dd.MM.yyyy')} - ${format(daysOfWeek[4], 'dd.MM.yyyy')}`;
   const speiseplanKey = selectedDate.toISOString().split('T')[0];
   const gerichte = speiseplan[speiseplanKey] || [];
 
@@ -87,48 +81,47 @@ export default function SpeiseplanScreen() {
     setAlerts((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const getWeekdayShort = (date: Date) =>
-    format(date, 'EEEEEE', { locale: undefined });
+  const getWeekdayShort = (date: Date) => format(date, 'EE', { locale: undefined });
 
   return (
     <View style={[styles.container, { backgroundColor: Colors[theme].background }]}>
       <Text style={[styles.title, { color: Colors[theme].primary }]}>📋 Speiseplan</Text>
 
-      {/* Wochenübersicht */}
       <View style={styles.weekHeader}>
         <TouchableOpacity onPress={() => changeWeek('prev')}>
-          <Ionicons name="chevron-back" size={24} />
+          <Ionicons name="chevron-back" size={24} color={Colors[theme].text} />
         </TouchableOpacity>
         <TouchableOpacity onPress={openDatePicker}>
-          <Text style={styles.weekText}>{weekLabel}</Text>
+          <Text style={[styles.weekText, { color: Colors[theme].text }]}>{weekLabel}</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => changeWeek('next')}>
-          <Ionicons name="chevron-forward" size={24} />
+          <Ionicons name="chevron-forward" size={24} color={Colors[theme].text} />
         </TouchableOpacity>
       </View>
 
-      {/* Wochentage mit Namen */}
       <View style={styles.dayRow}>
         {daysOfWeek.map((day) => (
           <TouchableOpacity
             key={day.toISOString()}
             onPress={() => setSelectedDate(day)}
-            style={[
-              styles.dayButton,
-              isSameDay(day, selectedDate) && styles.dayButtonActive,
-            ]}
+            style={[styles.dayButton, {
+              backgroundColor: isSameDay(day, selectedDate)
+                ? Colors[theme].primary
+                : Colors[theme].surface,
+            }]}
           >
-            <Text style={isSameDay(day, selectedDate) ? styles.dayTextActive : styles.dayText}>
-              {getWeekdayShort(day)}
-            </Text>
-            <Text style={isSameDay(day, selectedDate) ? styles.dayTextActiveSmall : styles.dayTextSmall}>
-              {format(day, 'dd.MM')}
-            </Text>
+            <Text style={{
+              color: isSameDay(day, selectedDate) ? '#fff' : Colors[theme].text,
+              fontWeight: '600',
+            }}>{getWeekdayShort(day)}</Text>
+            <Text style={{
+              color: isSameDay(day, selectedDate) ? '#fff' : Colors[theme].text,
+              fontSize: 12,
+            }}>{format(day, 'dd.MM')}</Text>
           </TouchableOpacity>
         ))}
       </View>
 
-      {/* Date Picker (Android / iOS) */}
       {showDatePicker && Platform.OS === 'android' && (
         <DateTimePicker
           value={selectedDate}
@@ -140,7 +133,7 @@ export default function SpeiseplanScreen() {
       {Platform.OS === 'ios' && (
         <Modal transparent animationType="slide" visible={showDatePicker}>
           <View style={styles.modalOverlay}>
-            <View style={styles.modalContent}>
+            <View style={[styles.modalContent, { backgroundColor: Colors[theme].background }]}>
               <DateTimePicker
                 value={selectedDate}
                 mode="date"
@@ -148,26 +141,24 @@ export default function SpeiseplanScreen() {
                 onChange={handleDateChange}
               />
               <TouchableOpacity onPress={() => setShowDatePicker(false)} style={styles.doneButton}>
-                <Text style={styles.doneText}>Fertig</Text>
+                <Text style={[styles.doneText, { color: Colors[theme].primary }]}>Fertig</Text>
               </TouchableOpacity>
             </View>
           </View>
         </Modal>
       )}
 
-      {/* Legende */}
-      <View style={styles.legende}>
-        <View style={styles.legendeItem}><Text>🌱</Text><Text style={styles.legendeText}>Vegan</Text></View>
-        <View style={styles.legendeItem}><Text>🥦</Text><Text style={styles.legendeText}>Vegetarisch</Text></View>
-        <View style={styles.legendeItem}><Text>🌶️</Text><Text style={styles.legendeText}>Scharf</Text></View>
-        <View style={styles.legendeItem}><Text>🔥</Text><Text style={styles.legendeText}>Beliebt</Text></View>
-        <View style={styles.legendeItem}><Ionicons name="heart" size={16} color="red" /><Text style={styles.legendeText}>Favorit</Text></View>
-        <View style={styles.legendeItem}><Ionicons name="notifications" size={16} color="#007AFF" /><Text style={styles.legendeText}>Erinnerung</Text></View>
+      <View style={[styles.legende, { backgroundColor: Colors[theme].surface }]}>
+        <View style={styles.legendeItem}><Text>🌱</Text><Text style={[styles.legendeText, { color: Colors[theme].text }]}>Vegan</Text></View>
+        <View style={styles.legendeItem}><Text>🥦</Text><Text style={[styles.legendeText, { color: Colors[theme].text }]}>Vegetarisch</Text></View>
+        <View style={styles.legendeItem}><Text>🌶️</Text><Text style={[styles.legendeText, { color: Colors[theme].text }]}>Scharf</Text></View>
+        <View style={styles.legendeItem}><Text>🔥</Text><Text style={[styles.legendeText, { color: Colors[theme].text }]}>Beliebt</Text></View>
+        <View style={styles.legendeItem}><Ionicons name="heart" size={16} color="red" /><Text style={[styles.legendeText, { color: Colors[theme].text }]}>Favorit</Text></View>
+        <View style={styles.legendeItem}><Ionicons name="notifications" size={16} color="#007AFF" /><Text style={[styles.legendeText, { color: Colors[theme].text }]}>Erinnerung</Text></View>
       </View>
 
-      {/* Gerichte */}
       {gerichte.length === 0 ? (
-        <Text style={styles.emptyText}>Kein Essen eingetragen</Text>
+        <Text style={[styles.emptyText, { color: Colors[theme].text }]}>Kein Essen eingetragen</Text>
       ) : (
         gerichte.map((gericht) => (
           <GerichtCard
@@ -197,28 +188,29 @@ function GerichtCard({
   onToggleFavorite: (id: number) => void;
   onToggleAlert: (id: number) => void;
 }) {
+  const theme = useColorScheme() || 'light';
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, { backgroundColor: Colors[theme].card }]}>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Text style={styles.cardTitle}>{gericht.name}</Text>
+        <Text style={[styles.cardTitle, { color: Colors[theme].text }]}>{gericht.name}</Text>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={() => onToggleFavorite(gericht.id)} style={{ marginLeft: 8 }}>
             <Ionicons
               name={isFavorite ? 'heart' : 'heart-outline'}
               size={20}
-              color={isFavorite ? 'red' : 'gray'}
+              color={isFavorite ? 'red' : Colors[theme].icon}
             />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => onToggleAlert(gericht.id)} style={{ marginLeft: 8 }}>
             <Ionicons
               name={isAlerted ? 'notifications' : 'notifications-outline'}
               size={20}
-              color={isAlerted ? '#007AFF' : 'gray'}
+              color={isAlerted ? '#007AFF' : Colors[theme].icon}
             />
           </TouchableOpacity>
         </View>
       </View>
-      <Text style={styles.cardText}>{gericht.beschreibung}</Text>
+      <Text style={[styles.cardText, { color: Colors[theme].text }]}>{gericht.beschreibung}</Text>
       <View style={styles.tagRow}>
         {gericht.tags?.includes('vegan') && <Text style={styles.tag}>🌱</Text>}
         {gericht.tags?.includes('vegetarisch') && <Text style={styles.tag}>🥦</Text>}
@@ -260,33 +252,13 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 8,
     borderRadius: 6,
-    backgroundColor: '#ddd',
     alignItems: 'center',
-  },
-  dayButtonActive: {
-    backgroundColor: '#007AFF',
-  },
-  dayText: {
-    color: '#333',
-    fontWeight: '600',
-  },
-  dayTextActive: {
-    color: '#fff',
-    fontWeight: '600',
-  },
-  dayTextSmall: {
-    fontSize: 12,
-    color: '#333',
-  },
-  dayTextActiveSmall: {
-    fontSize: 12,
-    color: '#fff',
+    width: 56,
   },
   legende: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-around',
-    backgroundColor: '#f0f0f0',
     paddingVertical: 10,
     borderRadius: 10,
     marginBottom: 12,
@@ -300,10 +272,8 @@ const styles = StyleSheet.create({
   legendeText: {
     fontSize: 14,
     marginLeft: 4,
-    color: '#444',
   },
   card: {
-    backgroundColor: '#f1f1f1',
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
@@ -331,7 +301,6 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontStyle: 'italic',
-    color: '#999',
     marginVertical: 16,
     textAlign: 'center',
   },
@@ -341,7 +310,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: 'white',
     padding: 16,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
@@ -352,6 +320,5 @@ const styles = StyleSheet.create({
   },
   doneText: {
     fontSize: 16,
-    color: '#007AFF',
   },
 });
