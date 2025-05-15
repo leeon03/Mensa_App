@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 type Props = {
@@ -27,7 +27,6 @@ export default function RatingStars({ value, editable = false, onChange }: Props
           />
         </TouchableOpacity>
       ))}
-      <Text style={styles.label}>{value.toFixed(1)} / 5</Text>
     </View>
   );
 }
@@ -41,10 +40,5 @@ const styles = StyleSheet.create({
   },
   star: {
     marginHorizontal: 2,
-  },
-  label: {
-    marginLeft: 8,
-    fontSize: 14,
-    color: '#555',
   },
 });

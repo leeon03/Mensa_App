@@ -1,22 +1,26 @@
 import React, { useState } from 'react';
 import { View, TextInput, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import RatingStars from './RatingStars';
 
 type Props = {
-  onSubmit: (text: string) => void;
+  onSubmit: (data: { text: string; stars: number }) => void;
 };
 
 export default function KommentarBox({ onSubmit }: Props) {
   const [text, setText] = useState('');
+  const [stars, setStars] = useState(0);
 
   const handleSubmit = () => {
-    if (text.trim().length > 0) {
-      onSubmit(text);
+    if (text.trim().length > 0 && stars > 0) {
+      onSubmit({ text, stars });
       setText('');
+      setStars(0);
     }
   };
 
   return (
     <View style={styles.container}>
+      <RatingStars value={stars} editable onChange={setStars} />
       <TextInput
         value={text}
         onChangeText={setText}

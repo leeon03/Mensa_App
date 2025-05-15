@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { Colors } from '../constants/Colors';
 import { useColorScheme } from 'react-native';
@@ -9,14 +9,13 @@ import ChatBubble from '../components/ChatBubble';
 export default function HeuteScreen() {
   const theme = useColorScheme() || 'light';
 
-  // Beispiel-Daten – später dynamisch laden
   const gericht = {
     name: 'Vegetarisches Curry',
     beschreibung: 'Mit Reis, Gemüse & Kokossoße',
-    bewertung: 4.2,
+    bewertung: 4,
     kommentare: [
-      { id: 1, user: 'Anna', text: 'Sehr lecker heute!' },
-      { id: 2, user: 'Tom', text: 'War etwas zu scharf für mich.' },
+      { id: 1, user: 'Anna', text: 'Sehr lecker heute!', stars: 5 },
+      { id: 2, user: 'Tom', text: 'War etwas zu scharf.', stars: 2 },
     ],
   };
 
@@ -32,13 +31,19 @@ export default function HeuteScreen() {
 
       <View style={styles.section}>
         <Text style={[styles.sectionTitle, { color: Colors[theme].text }]}>🗣️ Deine Bewertung</Text>
-        <KommentarBox onSubmit={(text) => console.log('Kommentar:', text)} />
+        <KommentarBox onSubmit={(data) => console.log(data)} />
       </View>
 
+      {/* 👉 HIER kommt dein Kommentarblock mit Sternen rein */}
       <View style={styles.section}>
         <Text style={[styles.sectionTitle, { color: Colors[theme].text }]}>💬 Kommentare</Text>
         {gericht.kommentare.map((kommentar) => (
-          <ChatBubble key={kommentar.id} user={kommentar.user} text={kommentar.text} />
+          <ChatBubble
+            key={kommentar.id}
+            user={kommentar.user}
+            text={kommentar.text}
+            stars={kommentar.stars}
+          />
         ))}
       </View>
     </ScrollView>
