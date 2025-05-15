@@ -1,6 +1,8 @@
 import React from 'react';
-import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Animated } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useColorScheme } from 'react-native';
+import { Colors } from '../constants/Colors';
 
 type Props = {
   value: number;
@@ -9,36 +11,58 @@ type Props = {
 };
 
 export default function RatingStars({ value, editable = false, onChange }: Props) {
-  const stars = [1, 2, 3, 4, 5];
+  const theme = useColorScheme() || 'light';
+
+  // Für Animation: Ein Array von 5 scale-Werten
+  const scales = React.useRef(
+    Array.from({ length: 5 }, () => new Animated.Value(1))
+  ).current;
+
+  const bounce = (index: number) => {
+    Animated.sequence([
+      Animated.timing(scales[index], {
+        toValue: 1.4,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(scales[index], {
+        toValue: 1,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  const handlePress = (index: number) => {
+    if (!editable) return;
+    if (onChange) onChange(index + 1);
+    bounce(index);
+  };
 
   return (
-    <View style={styles.row}>
-      {stars.map((star) => (
-        <TouchableOpacity
-          key={star}
-          onPress={() => editable && onChange?.(star)}
-          disabled={!editable}
-        >
-          <Ionicons
-            name={star <= value ? 'star' : 'star-outline'}
-            size={24}
-            color="#FFD700"
-            style={styles.star}
-          />
-        </TouchableOpacity>
-      ))}
+    <View style={styles.starRow}>
+      {Array.from({ length: 5 }).map((_, i) => {
+        const filled = i < value;
+        return (
+          <TouchableOpacity key={i} onPress={() => handlePress(i)} disabled={!editable}>
+            <Animated.View style={{ transform: [{ scale: scales[i] }] }}>
+              <Ionicons
+                name={filled ? 'star' : 'star-outline'}
+                size={24}
+                color={filled ? Colors[theme].accent2 : Colors[theme].icon}
+              />
+            </Animated.View>
+          </TouchableOpacity>
+        );
+      })}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  row: {
+  starRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    marginTop: 6,
-  },
-  star: {
-    marginHorizontal: 2,
+    gap: 6,
+    marginBottom: 8,
   },
 });

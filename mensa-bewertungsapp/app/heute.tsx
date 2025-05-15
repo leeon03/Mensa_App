@@ -5,6 +5,7 @@ import { useColorScheme } from 'react-native';
 import RatingStars from '../components/RatingStars';
 import KommentarBox from '../components/KommentarBox';
 import ChatBubble from '../components/ChatBubble';
+import * as Animatable from 'react-native-animatable'; // ✅ NEU: Animationsimport
 
 export default function HeuteScreen() {
   const theme = useColorScheme() || 'light';
@@ -21,7 +22,7 @@ export default function HeuteScreen() {
 
   return (
     <ScrollView style={[styles.container, { backgroundColor: Colors[theme].background }]}>
-      <Text style={[styles.title, { color: Colors[theme].primary }]}>🍽️ Heute in der Mensa</Text>
+      <Text style={[styles.title, { color: Colors[theme].accent2 }]}>Heute in der Mensa</Text>
 
       <View style={[styles.gerichtBox, { backgroundColor: Colors[theme].surface }]}>
         <Text style={[styles.gerichtName, { color: Colors[theme].text }]}>{gericht.name}</Text>
@@ -36,13 +37,19 @@ export default function HeuteScreen() {
 
       <View style={styles.section}>
         <Text style={[styles.sectionTitle, { color: Colors[theme].text }]}>💬 Kommentare</Text>
-        {gericht.kommentare.map((kommentar) => (
-          <ChatBubble
+        {gericht.kommentare.map((kommentar, index) => (
+          <Animatable.View
             key={kommentar.id}
-            user={kommentar.user}
-            text={kommentar.text}
-            stars={kommentar.stars}
-          />
+            animation="fadeInLeft"   // ✅ Slide-in von links
+            duration={500}
+            delay={index * 150}      // ✅ Gestaffelte Verzögerung pro Kommentar
+          >
+            <ChatBubble
+              user={kommentar.user}
+              text={kommentar.text}
+              stars={kommentar.stars}
+            />
+          </Animatable.View>
         ))}
       </View>
     </ScrollView>
@@ -55,10 +62,15 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
+    fontSize: 36,
+    fontWeight: '900',
     textAlign: 'center',
+    marginBottom: 24,
+    textTransform: 'uppercase',
+    letterSpacing: 1.5,
+    textShadowColor: 'rgba(0,0,0,0.15)',
+    textShadowOffset: { width: 1, height: 2 },
+    textShadowRadius: 3,
   },
   gerichtBox: {
     marginBottom: 28,

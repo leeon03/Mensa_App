@@ -85,7 +85,7 @@ export default function SpeiseplanScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: Colors[theme].background }]}>
-      <Text style={[styles.title, { color: Colors[theme].accent1 }]}>📋 Speiseplan</Text>
+      <Text style={[styles.title, { color: Colors[theme].accent1 }]}>Speiseplan</Text>
 
       <View style={styles.weekHeader}>
         <TouchableOpacity onPress={() => changeWeek('prev')}>
@@ -225,13 +225,19 @@ function GerichtCard({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 50,
+    paddingTop: 12,
     paddingHorizontal: 16,
   },
   title: {
-    fontSize: 24,
-    fontWeight: '700',
-    marginBottom: 16,
+    fontSize: 36,
+    fontWeight: '900',
+    textAlign: 'center',
+    marginBottom: 24,
+    textTransform: 'uppercase',
+    letterSpacing: 1.5,
+    textShadowColor: 'rgba(0,0,0,0.15)',
+    textShadowOffset: { width: 1, height: 2 },
+    textShadowRadius: 3,
   },
   weekHeader: {
     flexDirection: 'row',
