@@ -1,4 +1,5 @@
-import React, { useState, useRef } from 'react';
+// tinder.tsx
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -15,28 +16,14 @@ import { useColorScheme } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import LottieView from 'lottie-react-native';
 import { BlurView } from 'expo-blur';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const screenWidth = Dimensions.get('window').width;
 
 const gerichte = [
-  {
-    id: 1,
-    name: 'Käsespätzle',
-    beschreibung: 'Mit Röstzwiebeln und Salat',
-    tags: ['vegetarisch'],
-  },
-  {
-    id: 2,
-    name: 'Chili sin Carne',
-    beschreibung: 'Vegan, mit Brot',
-    tags: ['vegan', 'scharf'],
-  },
-  {
-    id: 3,
-    name: 'Schnitzel mit Pommes',
-    beschreibung: 'Klassiker mit Zitrone',
-    tags: [],
-  },
+  { id: 1, name: 'Käsespätzle', beschreibung: 'Mit Röstzwiebeln und Salat', tags: ['vegetarisch'] },
+  { id: 2, name: 'Chili sin Carne', beschreibung: 'Vegan, mit Brot', tags: ['vegan', 'scharf'] },
+  { id: 3, name: 'Schnitzel mit Pommes', beschreibung: 'Klassiker mit Zitrone', tags: [] },
 ];
 
 export default function SwipeScreen() {
@@ -45,6 +32,28 @@ export default function SwipeScreen() {
   const [favorites, setFavorites] = useState<number[]>([]);
   const [swipeDirection, setSwipeDirection] = useState<'like' | 'dislike' | null>(null);
   const [showMatch, setShowMatch] = useState(false);
+  const [introVisible, setIntroVisible] = useState(true);
+  const [introStep, setIntroStep] = useState(1);
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const checkIntro = async () => {
+      const seenIntro = await AsyncStorage.getItem('seenIntro');
+      if (seenIntro === 'true') {
+        setIntroVisible(false);
+      }
+    };
+    checkIntro();
+  }, []);
+
+  useEffect(() => {
+    fadeAnim.setValue(0);
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 400,
+      useNativeDriver: true,
+    }).start();
+  }, [introStep]);
 
   const position = useRef(new Animated.ValueXY()).current;
   const [likeScale] = useState(new Animated.Value(1));
@@ -123,7 +132,7 @@ export default function SwipeScreen() {
   if (!currentGericht) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.doneText}>Keine weiteren Gerichte</Text>
+        <Text style={styles.doneText}>Keine weiteren Gerichte verfügbar.</Text>
       </View>
     );
   }
@@ -136,26 +145,24 @@ export default function SwipeScreen() {
         {...panResponder.panHandlers}
         style={[styles.card, swipeCardStyle, { backgroundColor: Colors[theme].card }]}
       >
-        <Animated.View
-          style={[styles.overlayLabel, {
-            left: 20,
-            transform: [{ rotate: '-12deg' }],
-            opacity: position.x.interpolate({ inputRange: [0, 120], outputRange: [0, 1], extrapolate: 'clamp' }),
-            backgroundColor: 'rgba(46, 204, 113, 0.15)',
-            borderColor: '#2ecc71',
-          }]}
+        <Animated.View style={[styles.overlayLabel, {
+          left: 20,
+          transform: [{ rotate: '-12deg' }],
+          opacity: position.x.interpolate({ inputRange: [0, 120], outputRange: [0, 1], extrapolate: 'clamp' }),
+          backgroundColor: 'rgba(46, 204, 113, 0.15)',
+          borderColor: '#2ecc71',
+        }]}
         >
           <Text style={[styles.overlayText, { color: '#2ecc71' }]}>LIKE</Text>
         </Animated.View>
 
-        <Animated.View
-          style={[styles.overlayLabel, {
-            right: 20,
-            transform: [{ rotate: '12deg' }],
-            opacity: position.x.interpolate({ inputRange: [-120, 0], outputRange: [1, 0], extrapolate: 'clamp' }),
-            backgroundColor: 'rgba(231, 76, 60, 0.15)',
-            borderColor: '#e74c3c',
-          }]}
+        <Animated.View style={[styles.overlayLabel, {
+          right: 20,
+          transform: [{ rotate: '12deg' }],
+          opacity: position.x.interpolate({ inputRange: [-120, 0], outputRange: [1, 0], extrapolate: 'clamp' }),
+          backgroundColor: 'rgba(231, 76, 60, 0.15)',
+          borderColor: '#e74c3c',
+        }]}
         >
           <Text style={[styles.overlayText, { color: '#e74c3c' }]}>NOPE</Text>
         </Animated.View>
@@ -178,7 +185,6 @@ export default function SwipeScreen() {
         </View>
       </Animated.View>
 
-      {/* Buttons ganz unten zentriert */}
       <View style={styles.buttons}>
         <Animated.View style={{ transform: [{ scale: dislikeScale }] }}>
           <TouchableOpacity onPress={() => handleSwipe('dislike')} style={styles.iconButton}>
@@ -192,12 +198,9 @@ export default function SwipeScreen() {
         </Animated.View>
       </View>
 
+      {/* Match Popup */}
       <Modal visible={showMatch} transparent animationType="fade">
-        <TouchableOpacity
-          activeOpacity={1}
-          onPress={() => setShowMatch(false)}
-          style={styles.matchContainer}
-        >
+        <TouchableOpacity activeOpacity={1} onPress={() => setShowMatch(false)} style={styles.matchContainer}>
           <BlurView intensity={40} tint="light" style={styles.matchCard}>
             <Text style={styles.matchTitle}>✨ It's a Match!</Text>
             <LottieView
@@ -213,9 +216,53 @@ export default function SwipeScreen() {
           </BlurView>
         </TouchableOpacity>
       </Modal>
+
+      {/* Intro Popup */}
+      <Modal visible={introVisible} transparent animationType="fade">
+        <View style={styles.matchContainer}>
+          <BlurView intensity={40} tint="dark" style={styles.matchCard}>
+            <Text style={[styles.matchTitle, { color: 'white' }]}>👋 Na, heiß auf was Leckeres?</Text>
+            <Animated.View style={{ opacity: fadeAnim, marginTop: 20 }}>
+              {introStep === 1 && <Text style={[styles.description, { color: 'white' }]}>1️⃣ Swipe nach rechts, um ein Gericht zu liken.</Text>}
+              {introStep === 2 && <Text style={[styles.description, { color: 'white' }]}>2️⃣ Swipe nach links, um ein Gericht zu überspringen.</Text>}
+              {introStep === 3 && <Text style={[styles.description, { color: 'white' }]}>3️⃣ Deine Favoriten findest du später gesammelt.</Text>}
+            </Animated.View>
+            <View style={styles.introControls}>
+              {introStep < 3 ? (
+                <TouchableOpacity onPress={() => setIntroStep((prev) => prev + 1)} style={styles.arrowButton}>
+                  <Ionicons name="chevron-forward" size={28} color="#2ecc71" />
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  onPress={async () => {
+                    await AsyncStorage.setItem('seenIntro', 'true');
+                    setIntroVisible(false);
+                  }}
+                  style={styles.startButton}
+                >
+                  <Text style={styles.startButtonText}>Los geht’s!</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+            <TouchableOpacity
+              onPress={async () => {
+                await AsyncStorage.setItem('seenIntro', 'true');
+                setIntroVisible(false);
+              }}
+              style={{ marginTop: 20 }}
+            >
+              <Text style={{ color: 'white', fontSize: 14, textDecorationLine: 'underline' }}>Nicht mehr anzeigen</Text>
+            </TouchableOpacity>
+          </BlurView>
+        </View>
+      </Modal>
     </View>
   );
 }
+
+// StyleSheet bleibt unverändert wie in deiner ursprünglichen Datei
+
+
 
 const styles = StyleSheet.create({
   container: {
@@ -375,4 +422,34 @@ const styles = StyleSheet.create({
     color: '#2ecc71',
     fontStyle: 'italic',
   },
+  introControls: {
+  marginTop: 30,
+  flexDirection: 'row',
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+arrowButton: {
+  backgroundColor: '#fff',
+  padding: 12,
+  borderRadius: 50,
+  elevation: 4,
+  shadowColor: '#000',
+  shadowOpacity: 0.2,
+  shadowRadius: 6,
+},
+startButton: {
+  backgroundColor: '#2ecc71',
+  paddingVertical: 12,
+  paddingHorizontal: 28,
+  borderRadius: 24,
+  shadowColor: '#000',
+  shadowOpacity: 0.3,
+  shadowRadius: 6,
+},
+startButtonText: {
+  color: '#fff',
+  fontSize: 16,
+  fontWeight: '600',
+},
+
 });
