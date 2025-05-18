@@ -8,46 +8,58 @@ import {
   LayoutAnimation,
   Platform,
   UIManager,
+  Alert,
 } from 'react-native';
 import { useColorScheme } from 'react-native';
 import { Colors } from '../constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Animatable from 'react-native-animatable';
 
-// LayoutAnimation für Android aktivieren
+// Android LayoutAnimation aktivieren
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-const STORAGE_KEY = 'favorites_alerts';
+const STORAGE_KEY = 'user_preferences';
 
-const mockFavorites = [
-  { id: '1', name: 'Spaghetti Bolognese', tags: ['beliebt'] },
-  { id: '2', name: 'Veganes Curry', tags: ['vegan', 'scharf'] },
-  { id: '3', name: 'Schnitzel mit Pommes', tags: [] },
+const mockFavoritesData = [
+  { id: 1, name: 'Spaghetti Bolognese', tags: ['beliebt'] },
+  { id: 2, name: 'Veganes Curry', tags: ['vegan', 'scharf'] },
+  { id: 3, name: 'Schnitzel mit Pommes', tags: [] },
 ];
 
 export default function FavoritesScreen() {
   const theme = useColorScheme() || 'light';
-  const [alerts, setAlerts] = useState<Record<string, boolean>>({});
+
+  const [favorites, setFavorites] = useState<number[]>([]);
+  const [alerts, setAlerts] = useState<Record<number, boolean>>({});
   const [showLegend, setShowLegend] = useState(false);
 
   useEffect(() => {
-    const loadAlertsFromStorage = async () => {
-      const stored = await AsyncStorage.getItem(STORAGE_KEY);
-      if (stored) setAlerts(JSON.parse(stored));
+    const loadPreferences = async () => {
+      const data = await AsyncStorage.getItem(STORAGE_KEY);
+      if (data) {
+        const parsed = JSON.parse(data);
+        setFavorites(parsed.favorites || []);
+        setAlerts(parsed.alerts || {});
+      } else {
+        const initialFavorites = mockFavoritesData.map((g) => g.id);
+        setFavorites(initialFavorites);
+        setAlerts({});
+      }
     };
-    loadAlertsFromStorage();
+    loadPreferences();
   }, []);
 
-  const saveAlertsToStorage = async (data: Record<string, boolean>) => {
-    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  const savePreferences = async (updatedFavorites: number[], updatedAlerts: Record<number, boolean>) => {
+    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify({ favorites: updatedFavorites, alerts: updatedAlerts }));
   };
 
-  const toggleAlert = (id: string) => {
+  const toggleAlert = (id: number) => {
     const updated = { ...alerts, [id]: !alerts[id] };
     setAlerts(updated);
-    saveAlertsToStorage(updated);
+    savePreferences(favorites, updated);
   };
 
   const toggleLegend = () => {
@@ -63,6 +75,30 @@ export default function FavoritesScreen() {
       {tags.includes('beliebt') && <Text style={styles.tag}>🔥</Text>}
     </View>
   );
+
+  const removeFromFavorites = (id: number) => {
+    Alert.alert(
+      'Favorit entfernen',
+      'Möchtest du dieses Gericht wirklich aus deinen Favoriten löschen?',
+      [
+        { text: 'Abbrechen', style: 'cancel' },
+        {
+          text: 'Entfernen',
+          style: 'destructive',
+          onPress: () => {
+            const updatedFavorites = favorites.filter((fid) => fid !== id);
+            const updatedAlerts = { ...alerts };
+            delete updatedAlerts[id];
+            setFavorites(updatedFavorites);
+            setAlerts(updatedAlerts);
+            savePreferences(updatedFavorites, updatedAlerts);
+          },
+        },
+      ]
+    );
+  };
+
+  const visibleFavorites = mockFavoritesData.filter((g) => favorites.includes(g.id));
 
   return (
     <View style={[styles.container, { backgroundColor: Colors[theme].background }]}>
@@ -91,28 +127,75 @@ export default function FavoritesScreen() {
         </View>
       )}
 
-      <FlatList
-        data={mockFavorites}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={[styles.item, { backgroundColor: Colors[theme].card }]}>
-            <View style={styles.itemHeader}>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Ionicons name="heart" size={20} color="red" />
-                <Text style={[styles.itemText, { color: Colors[theme].text }]}>{item.name}</Text>
+      {visibleFavorites.length === 0 ? (
+        <Text style={{ textAlign: 'center', marginTop: 20, color: Colors[theme].text }}>
+          Du hast noch keine Favoriten gespeichert.
+        </Text>
+      ) : (
+        <FlatList
+          data={visibleFavorites}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item, index }) => (
+            <Animatable.View
+              animation="fadeInLeft"
+              duration={500}
+              delay={index * 100}
+              useNativeDriver
+            >
+              <View style={[styles.item, { backgroundColor: Colors[theme].card }]}>
+                <View style={styles.itemHeader}>
+                  <Animatable.View animation="bounceIn">
+                    <TouchableOpacity onPress={() => removeFromFavorites(item.id)}>
+                      <Ionicons name="heart" size={20} color="red" />
+                    </TouchableOpacity>
+                  </Animatable.View>
+                  <Text style={[styles.itemText, { color: Colors[theme].text }]}>{item.name}</Text>
+                  <Animatable.View animation="pulse" duration={300}>
+                    <TouchableOpacity onPress={() => toggleAlert(item.id)}>
+                      <Ionicons
+                        name={alerts[item.id] ? 'notifications' : 'notifications-outline'}
+                        size={20}
+                        color={alerts[item.id] ? '#007AFF' : Colors[theme].icon}
+                      />
+                    </TouchableOpacity>
+                  </Animatable.View>
+                </View>
+                {renderTags(item.tags)}
               </View>
-              <TouchableOpacity onPress={() => toggleAlert(item.id)}>
-                <Ionicons
-                  name={alerts[item.id] ? 'notifications' : 'notifications-outline'}
-                  size={20}
-                  color={alerts[item.id] ? '#007AFF' : Colors[theme].icon}
-                />
-              </TouchableOpacity>
-            </View>
-            {renderTags(item.tags)}
-          </View>
-        )}
-      />
+            </Animatable.View>
+          )}
+        />
+      )}
+
+      <TouchableOpacity
+        onPress={() => {
+          Alert.alert(
+            'AsyncStorage löschen',
+            'Willst du wirklich alle gespeicherten Favoriten und Erinnerungen löschen?',
+            [
+              { text: 'Abbrechen', style: 'cancel' },
+              {
+                text: 'Löschen',
+                style: 'destructive',
+                onPress: async () => {
+                  await AsyncStorage.removeItem(STORAGE_KEY);
+                  setFavorites([]);
+                  setAlerts({});
+                },
+              },
+            ]
+          );
+        }}
+        style={{
+          marginTop: 24,
+          padding: 12,
+          backgroundColor: '#ddd',
+          borderRadius: 10,
+          alignSelf: 'center',
+        }}
+      >
+        <Text style={{ color: '#000', fontWeight: 'bold' }}>🗑️ AsyncStorage zurücksetzen</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -173,9 +256,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    gap: 12,
   },
   itemText: {
-    marginLeft: 12,
+    flex: 1,
     fontSize: 16,
     fontWeight: '600',
   },
