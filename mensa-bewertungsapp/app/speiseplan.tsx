@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   Platform,
   Modal,
+  LayoutAnimation,
+  UIManager,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Colors } from '../constants/Colors';
@@ -21,6 +23,11 @@ import {
 } from 'date-fns';
 
 const screenWidth = Dimensions.get('window').width;
+
+// Für Android Layout-Animation aktivieren
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 const speiseplan: Record<string, any[]> = {
   '2025-05-15': [
@@ -47,10 +54,10 @@ export default function SpeiseplanScreen() {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [favorites, setFavorites] = useState<Record<number, boolean>>({});
   const [alerts, setAlerts] = useState<Record<number, boolean>>({});
+  const [showLegend, setShowLegend] = useState(false);
 
   const startOfCurrentWeek = startOfWeek(selectedDate, { weekStartsOn: 1 });
   const daysOfWeek = Array.from({ length: 5 }, (_, i) => addDays(startOfCurrentWeek, i));
-
   const weekLabel = `${format(daysOfWeek[0], 'dd.MM.yyyy')} - ${format(daysOfWeek[4], 'dd.MM.yyyy')}`;
   const speiseplanKey = selectedDate.toISOString().split('T')[0];
   const gerichte = speiseplan[speiseplanKey] || [];
@@ -81,7 +88,12 @@ export default function SpeiseplanScreen() {
     setAlerts((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const getWeekdayShort = (date: Date) => format(date, 'EE', { locale: undefined });
+  const getWeekdayShort = (date: Date) => format(date, 'EE');
+
+  const toggleLegend = () => {
+    LayoutAnimation.easeInEaseOut();
+    setShowLegend(!showLegend);
+  };
 
   return (
     <View style={[styles.container, { backgroundColor: Colors[theme].background }]}>
@@ -104,20 +116,31 @@ export default function SpeiseplanScreen() {
           <TouchableOpacity
             key={day.toISOString()}
             onPress={() => setSelectedDate(day)}
-            style={[styles.dayButton, {
-              backgroundColor: isSameDay(day, selectedDate)
-                ? Colors[theme].accent1
-                : Colors[theme].surface,
-            }]}
+            style={[
+              styles.dayButton,
+              {
+                backgroundColor: isSameDay(day, selectedDate)
+                  ? Colors[theme].accent1
+                  : Colors[theme].surface,
+              },
+            ]}
           >
-            <Text style={{
-              color: isSameDay(day, selectedDate) ? '#fff' : Colors[theme].text,
-              fontWeight: '600',
-            }}>{getWeekdayShort(day)}</Text>
-            <Text style={{
-              color: isSameDay(day, selectedDate) ? '#fff' : Colors[theme].text,
-              fontSize: 12,
-            }}>{format(day, 'dd.MM')}</Text>
+            <Text
+              style={{
+                color: isSameDay(day, selectedDate) ? '#fff' : Colors[theme].text,
+                fontWeight: '600',
+              }}
+            >
+              {getWeekdayShort(day)}
+            </Text>
+            <Text
+              style={{
+                color: isSameDay(day, selectedDate) ? '#fff' : Colors[theme].text,
+                fontSize: 12,
+              }}
+            >
+              {format(day, 'dd.MM')}
+            </Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -148,17 +171,34 @@ export default function SpeiseplanScreen() {
         </Modal>
       )}
 
-      <View style={[styles.legende, { backgroundColor: Colors[theme].surface }]}>
-        <View style={styles.legendeItem}><Text>🌱</Text><Text style={[styles.legendeText, { color: Colors[theme].text }]}>Vegan</Text></View>
-        <View style={styles.legendeItem}><Text>🥦</Text><Text style={[styles.legendeText, { color: Colors[theme].text }]}>Vegetarisch</Text></View>
-        <View style={styles.legendeItem}><Text>🌶️</Text><Text style={[styles.legendeText, { color: Colors[theme].text }]}>Scharf</Text></View>
-        <View style={styles.legendeItem}><Text>🔥</Text><Text style={[styles.legendeText, { color: Colors[theme].text }]}>Beliebt</Text></View>
-        <View style={styles.legendeItem}><Ionicons name="heart" size={16} color="red" /><Text style={[styles.legendeText, { color: Colors[theme].text }]}>Favorit</Text></View>
-        <View style={styles.legendeItem}><Ionicons name="notifications" size={16} color="#007AFF" /><Text style={[styles.legendeText, { color: Colors[theme].text }]}>Erinnerung</Text></View>
-      </View>
+      {/* Aufklappbare Legende */}
+      <TouchableOpacity onPress={toggleLegend} style={styles.legendToggle}>
+        <Text style={[styles.legendeTitle, { color: Colors[theme].text }]}>
+          Legende {showLegend ? '▲' : '▼'}
+        </Text>
+      </TouchableOpacity>
+
+      {showLegend && (
+        <View style={[styles.legendeContainer, { backgroundColor: Colors[theme].surface }]}>
+          <View style={styles.legendeChip}><Text style={styles.chipText}>🌱 Vegan</Text></View>
+          <View style={styles.legendeChip}><Text style={styles.chipText}>🥦 Vegetarisch</Text></View>
+          <View style={styles.legendeChip}><Text style={styles.chipText}>🌶️ Scharf</Text></View>
+          <View style={styles.legendeChip}><Text style={styles.chipText}>🔥 Beliebt</Text></View>
+          <View style={styles.legendeChip}>
+            <Ionicons name="heart" size={14} color="red" style={{ marginRight: 4 }} />
+            <Text style={styles.chipText}>Favorit</Text>
+          </View>
+          <View style={styles.legendeChip}>
+            <Ionicons name="notifications" size={14} color="#007AFF" style={{ marginRight: 4 }} />
+            <Text style={styles.chipText}>Erinnerung</Text>
+          </View>
+        </View>
+      )}
 
       {gerichte.length === 0 ? (
-        <Text style={[styles.emptyText, { color: Colors[theme].text }]}>Kein Essen eingetragen</Text>
+        <Text style={[styles.emptyText, { color: Colors[theme].text }]}>
+          Kein Essen eingetragen
+        </Text>
       ) : (
         gerichte.map((gericht) => (
           <GerichtCard
@@ -261,23 +301,35 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: 56,
   },
-  legende: {
+  legendToggle: {
+    alignSelf: 'flex-start',
+    paddingVertical: 6,
+  },
+  legendeTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  legendeContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-around',
-    paddingVertical: 10,
-    borderRadius: 10,
+    justifyContent: 'flex-start',
+    padding: 10,
+    borderRadius: 12,
     marginBottom: 12,
   },
-  legendeItem: {
+  legendeChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginHorizontal: 6,
-    marginVertical: 4,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    margin: 4,
   },
-  legendeText: {
-    fontSize: 14,
-    marginLeft: 4,
+  chipText: {
+    fontSize: 13,
+    color: '#333',
   },
   card: {
     borderRadius: 12,
