@@ -21,7 +21,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function HomeScreen() {
   const theme = useColorScheme() || 'light';
   const router = useRouter();
-  const [isFavorite, setIsFavorite] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
 
   const logoSource =
@@ -55,14 +54,17 @@ export default function HomeScreen() {
     <View style={[styles.container, { backgroundColor: Colors[theme].background }]}>
       <View style={styles.topBar}>
         <AnimatedIcon
-          name={isFavorite ? 'heart' : 'heart-outline'}
+          name="heart-outline"
           onPress={() => {
-            setIsFavorite(true);
             router.push('/favorites');
           }}
-          color={isFavorite ? 'red' : iconColor}
+          color={iconColor}
         />
-        <AnimatedIcon name="person-circle" onPress={() => router.push('/profile')} color={iconColor} />
+        <AnimatedIcon
+          name="person-circle"
+          onPress={() => router.push('/profile')}
+          color={iconColor}
+        />
       </View>
 
       <View style={styles.header}>
@@ -94,14 +96,12 @@ export default function HomeScreen() {
         />
       </View>
 
-      {/* DEV: Onboarding zurücksetzen */}
       {__DEV__ && (
         <TouchableOpacity onPress={handleResetOnboarding} style={styles.resetButton}>
           <Text style={styles.resetButtonText}>🔁 Onboarding zurücksetzen</Text>
         </TouchableOpacity>
       )}
 
-      {/* Onboarding Modal (nicht mehr verwendet, aber belassen falls du es kombinierst) */}
       <Modal visible={showOnboarding} animationType="slide" transparent>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
@@ -155,9 +155,15 @@ function AnimatedIcon({
   color: string;
 }) {
   const scaleAnim = useRef(new Animated.Value(1)).current;
+  const [tempColor, setTempColor] = useState<string | null>(null);
 
   const handlePress = () => {
     Haptics.selectionAsync();
+
+    if (name === 'heart-outline') {
+      setTempColor('red');
+      setTimeout(() => setTempColor(null), 400);
+    }
 
     Animated.sequence([
       Animated.timing(scaleAnim, {
@@ -178,7 +184,7 @@ function AnimatedIcon({
   return (
     <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
       <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
-        <Ionicons name={name} size={28} color={color} style={styles.icon} />
+        <Ionicons name={name} size={28} color={tempColor || color} style={styles.icon} />
       </Animated.View>
     </TouchableOpacity>
   );
