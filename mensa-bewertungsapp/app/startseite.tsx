@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -6,32 +6,68 @@ import {
   TouchableOpacity,
   Image,
   Platform,
+  Animated,
+  Modal,
+  Pressable,
+  Alert,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useColorScheme } from 'react-native';
 import { Colors } from '../constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function HomeScreen() {
   const theme = useColorScheme() || 'light';
   const router = useRouter();
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   const logoSource =
     theme === 'dark'
       ? require('../assets/AppLogoDarkmode.png')
       : require('../assets/AppLogo.png');
 
+  const iconColor = Colors[theme].text;
+
+  useEffect(() => {
+    const checkOnboarding = async () => {
+      const seen = await AsyncStorage.getItem('onboardingSeen');
+      if (!seen) {
+        router.replace('./OnboardingScreen');
+      }
+    };
+    checkOnboarding();
+  }, []);
+
+  const handleSkipOnboarding = async () => {
+    await AsyncStorage.setItem('onboardingSeen', 'true');
+    setShowOnboarding(false);
+  };
+
+  const handleResetOnboarding = async () => {
+    await AsyncStorage.removeItem('onboardingSeen');
+    Alert.alert('Zurückgesetzt', 'Das Onboarding wird beim nächsten Start wieder angezeigt.');
+  };
+
   return (
     <View style={[styles.container, { backgroundColor: Colors[theme].background }]}>
-      <View style={styles.header}>
-        <Image
-          source={logoSource}
-          style={styles.logo}
-          resizeMode="contain"
+      <View style={styles.topBar}>
+        <AnimatedIcon
+          name={isFavorite ? 'heart' : 'heart-outline'}
+          onPress={() => {
+            setIsFavorite(true);
+            router.push('/favorites');
+          }}
+          color={isFavorite ? 'red' : iconColor}
         />
-        <Text style={[styles.title, { color: Colors[theme].primary }]}>
-          RateMyMensa
-        </Text>
+        <AnimatedIcon name="person-circle" onPress={() => router.push('/profile')} color={iconColor} />
+      </View>
+
+      <View style={styles.header}>
+        <Image source={logoSource} style={styles.logo} resizeMode="contain" />
+        <Text style={[styles.title, { color: Colors[theme].primary }]}>RateMyMensa</Text>
         <Text style={[styles.subtitle, { color: Colors[theme].text }]}>
           Speisepläne checken, Gerichte bewerten, Favoriten speichern – deine Mensa, dein Geschmack.
         </Text>
@@ -57,6 +93,28 @@ export default function HomeScreen() {
           onPress={() => router.push('/tinder')}
         />
       </View>
+
+      {/* DEV: Onboarding zurücksetzen */}
+      {__DEV__ && (
+        <TouchableOpacity onPress={handleResetOnboarding} style={styles.resetButton}>
+          <Text style={styles.resetButtonText}>🔁 Onboarding zurücksetzen</Text>
+        </TouchableOpacity>
+      )}
+
+      {/* Onboarding Modal (nicht mehr verwendet, aber belassen falls du es kombinierst) */}
+      <Modal visible={showOnboarding} animationType="slide" transparent>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Willkommen bei RateMyMensa!</Text>
+            <Text style={styles.modalText}>
+              Hier kannst du den Speiseplan checken, Essen bewerten und Favoriten speichern.
+            </Text>
+            <Pressable style={styles.modalButton} onPress={handleSkipOnboarding}>
+              <Text style={styles.modalButtonText}>Nicht mehr anzeigen</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -75,11 +133,53 @@ function PrimaryButton({
   return (
     <TouchableOpacity
       style={[styles.button, { backgroundColor: color }]}
-      onPress={onPress}
+      onPress={() => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        onPress();
+      }}
       activeOpacity={0.85}
     >
       <Ionicons name={icon} size={20} color="#fff" style={styles.buttonIcon} />
       <Text style={styles.buttonText}>{label}</Text>
+    </TouchableOpacity>
+  );
+}
+
+function AnimatedIcon({
+  name,
+  onPress,
+  color,
+}: {
+  name: keyof typeof Ionicons.glyphMap;
+  onPress: () => void;
+  color: string;
+}) {
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  const handlePress = () => {
+    Haptics.selectionAsync();
+
+    Animated.sequence([
+      Animated.timing(scaleAnim, {
+        toValue: 1.2,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(scaleAnim, {
+        toValue: 1,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    onPress();
+  };
+
+  return (
+    <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
+      <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+        <Ionicons name={name} size={28} color={color} style={styles.icon} />
+      </Animated.View>
     </TouchableOpacity>
   );
 }
@@ -90,11 +190,22 @@ const styles = StyleSheet.create({
     padding: 24,
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 24,
+  },
+  topBar: {
+    position: 'absolute',
+    top: 50,
+    right: 24,
+    flexDirection: 'row',
+    gap: 16,
+    zIndex: 10,
+  },
+  icon: {
+    marginLeft: 16,
   },
   header: {
     alignItems: 'center',
     marginBottom: 36,
+    marginTop: 40,
   },
   logo: {
     width: 160,
@@ -117,7 +228,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     width: '100%',
-    gap: 16,
+    marginTop: 20,
   },
   button: {
     flexDirection: 'row',
@@ -126,6 +237,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 14,
     justifyContent: 'center',
+    marginBottom: 16,
     shadowColor: '#000',
     shadowOpacity: 0.08,
     shadowRadius: 4,
@@ -138,5 +250,48 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: '600',
     fontSize: 16,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    padding: 24,
+    borderRadius: 16,
+    width: '80%',
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 12,
+  },
+  modalText: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 24,
+  },
+  modalButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: '#333',
+    borderRadius: 10,
+  },
+  modalButtonText: {
+    color: '#fff',
+    fontWeight: '600',
+  },
+  resetButton: {
+    marginTop: 24,
+    padding: 10,
+    backgroundColor: '#ddd',
+    borderRadius: 8,
+  },
+  resetButtonText: {
+    color: '#000',
+    fontWeight: 'bold',
   },
 });
