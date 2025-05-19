@@ -10,14 +10,14 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import { useColorScheme } from 'react-native';
 import { Colors } from '../constants/Colors';
-import * as Haptics from 'expo-haptics'; // ✅ Haptics importiert
+import * as Haptics from 'expo-haptics';
+import { useRouter } from 'expo-router'; // ✅ expo-router importieren
 
 export default function UserLoginScreen() {
   const theme = useColorScheme() || 'light';
-  const navigation = useNavigation();
+  const router = useRouter(); // ✅ statt useNavigation()
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -26,7 +26,7 @@ export default function UserLoginScreen() {
   const [passwordFocused, setPasswordFocused] = useState(false);
 
   const handleLogin = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); // ✅ Haptisches Feedback
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     if (!email || !password) {
       Alert.alert('Fehler', 'Bitte E-Mail und Passwort eingeben.');
@@ -34,7 +34,7 @@ export default function UserLoginScreen() {
     }
 
     console.log('Benutzer-Login:', { email, password });
-    navigation.navigate('startseite');
+    router.replace('/startseite'); // ✅ expo-router style navigation
   };
 
   return (

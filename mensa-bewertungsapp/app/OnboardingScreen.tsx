@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Onboarding from 'react-native-onboarding-swiper/src/index';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
-import { Colors } from '../constants/Colors'; // Pfad ggf. anpassen
+import { Colors } from '../constants/Colors';
 
 export default function OnboardingScreen() {
   const theme = useColorScheme() || 'light';
@@ -30,7 +30,6 @@ export default function OnboardingScreen() {
       dotColor={theme === 'dark' ? '#555' : '#ccc'}
       activeDotColor={Colors[theme].primary}
       pages={[
-        // Einführungsseite mit App-Logo
         {
           backgroundColor,
           image: <Image source={logo} style={{ width: 160, height: 160, resizeMode: 'contain' }} />,
@@ -56,8 +55,6 @@ export default function OnboardingScreen() {
             </Text>
           ),
         },
-
-        // Speiseplan
         {
           backgroundColor,
           image: <Ionicons name="calendar-outline" size={100} color={Colors[theme].accent1} />,
@@ -83,8 +80,6 @@ export default function OnboardingScreen() {
             </Text>
           ),
         },
-
-        // Heute in der Mensa
         {
           backgroundColor,
           image: <Ionicons name="restaurant-outline" size={100} color={Colors[theme].accent2} />,
@@ -110,8 +105,6 @@ export default function OnboardingScreen() {
             </Text>
           ),
         },
-
-        // Favoriten
         {
           backgroundColor,
           image: <Ionicons name="heart-outline" size={100} color="red" />,
@@ -137,8 +130,6 @@ export default function OnboardingScreen() {
             </Text>
           ),
         },
-
-        // Essens-Tinder
         {
           backgroundColor,
           image: <Ionicons name="heart" size={100} color={Colors[theme].accent3} />,
@@ -164,8 +155,6 @@ export default function OnboardingScreen() {
             </Text>
           ),
         },
-
-        // Abschluss: Profil und Motivation
         {
           backgroundColor,
           image: <Ionicons name="person-circle" size={100} color={textColor} />,

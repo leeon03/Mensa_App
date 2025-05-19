@@ -17,7 +17,7 @@ export default function LoginScreen() {
 
   const handleOption = (option: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); // ✅ Haptik hinzugefügt
-    navigation.navigate(option);
+    navigation.navigate(option as never);
   };
 
   const logoSource =
