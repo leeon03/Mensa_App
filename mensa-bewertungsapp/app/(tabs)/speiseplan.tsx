@@ -11,9 +11,9 @@ import {
   UIManager,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Colors } from '../constants/Colors';
+import { Colors } from '@constants/Colors';
 import { useColorScheme } from 'react-native';
-import RatingStars from '../components/RatingStars';
+import RatingStars from '../../components/RatingStars';
 import { Ionicons } from '@expo/vector-icons';
 import {
   addDays,

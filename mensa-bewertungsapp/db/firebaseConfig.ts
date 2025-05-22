@@ -1,19 +1,24 @@
-// firebaseConfig.ts
 import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
+// Firebase-Konfiguration
 const firebaseConfig = {
-  apiKey: "AIzaSyDwpfs9prktvaS_XMKepp4kaEpZJqptuYo",
-  authDomain: "uni-mensa.firebaseapp.com",
-  projectId: "uni-mensa",
-  storageBucket: "uni-mensa.firebasestorage.app",
-  messagingSenderId: "119678230583",
-  appId: "1:119678230583:web:39a133401ce5a93de2dfb2",
-  measurementId: "G-EWEJ0NTDMY"
+  apiKey: 'AIzaSyB2f97T7UkO0yzCzLp3v1O-atXvjAFhKGQ',
+  authDomain: 'mensa-bewertungsapp.firebaseapp.com',
+  databaseURL: 'https://mensa-bewertungsapp-default-rtdb.firebaseio.com',
+  projectId: 'mensa-bewertungsapp',
+  storageBucket: 'mensa-bewertungsapp.appspot.com',
+  messagingSenderId: '119485466098',
+  appId: '1:119485466098:web:cee40020f69fc1137b576b',
+  measurementId: 'G-N7ZWYK180X',
 };
 
+// Initialisierung
 const app = initializeApp(firebaseConfig);
 
-// Wichtig: Firestore exportieren
-export const db = getFirestore(app);
-export default app;
+// Auth und DB – einfach und direkt
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+export { app, auth, db };

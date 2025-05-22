@@ -11,7 +11,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { useColorScheme } from 'react-native';
-import { Colors } from '../constants/Colors';
+import { Colors } from '@constants/Colors';
 import * as Haptics from 'expo-haptics'; // ✅ Haptics importieren
 
 export default function AdminLoginScreen() {

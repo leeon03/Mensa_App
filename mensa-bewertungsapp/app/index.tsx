@@ -7,17 +7,19 @@ import {
   useColorScheme,
   Image,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { Colors } from '../constants/Colors';
-import * as Haptics from 'expo-haptics'; // ✅ Haptics importiert
+import { useRouter } from 'expo-router';
+import { Colors } from '@constants/Colors';
+import * as Haptics from 'expo-haptics';
+
+type ScreenRoute = 'login/user' | 'register' | 'login/admin';
 
 export default function LoginScreen() {
   const theme = useColorScheme() || 'light';
-  const navigation = useNavigation();
+  const router = useRouter();
 
-  const handleOption = (option: string) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); // ✅ Haptik hinzugefügt
-    navigation.navigate(option as never);
+  const handleOption = (screen: ScreenRoute) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    router.push(`/${screen}`);
   };
 
   const logoSource =
@@ -35,21 +37,20 @@ export default function LoginScreen() {
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={[styles.button, { backgroundColor: Colors[theme].accent1 }]}
-          onPress={() => handleOption('UserLoginScreen')}
-        >
+          onPress={() => handleOption('login/user')}        >
           <Text style={styles.buttonText}>🔑 Benutzer Login</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={[styles.button, { backgroundColor: Colors[theme].accent2 }]}
-          onPress={() => handleOption('RegisterScreen')}
+          onPress={() => handleOption('register')}
         >
           <Text style={styles.buttonText}>📝 Neu registrieren</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={[styles.button, { backgroundColor: Colors[theme].accent3 }]}
-          onPress={() => handleOption('AdminLoginScreen')}
+          onPress={() => handleOption('login/admin')}
         >
           <Text style={styles.buttonText}>🛠️ Admin Login</Text>
         </TouchableOpacity>

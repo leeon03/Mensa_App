@@ -2,10 +2,11 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
+    "baseUrl": ".",                       // erforderlich für Pfad-Aliase
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "@/*": ["./*"],                     // Projekt-Root (z. B. @/app/index.tsx)
+      "@constants/*": ["constants/*"],    // z. B. @constants/Colors
+      "@components/*": ["components/*"]   // z. B. @components/RatingStars
     }
   },
   "include": [

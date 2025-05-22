@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
-import { Colors } from '../constants/Colors';
+import { Colors } from '@constants/Colors';
 import { useColorScheme } from 'react-native';
-import RatingStars from '../components/RatingStars';
-import KommentarBox from '../components/KommentarBox';
-import ChatBubble from '../components/ChatBubble';
+import RatingStars from '../../components/RatingStars';
+import KommentarBox from '../../components/KommentarBox';
+import ChatBubble from '../../components/ChatBubble';
 import * as Animatable from 'react-native-animatable'; // ✅ NEU: Animationsimport
 
 export default function HeuteScreen() {

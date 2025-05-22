@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Onboarding from 'react-native-onboarding-swiper/src/index';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
-import { Colors } from '../constants/Colors';
+import { Colors } from '@constants/Colors';
 
 export default function OnboardingScreen() {
   const theme = useColorScheme() || 'light';

@@ -11,7 +11,7 @@ import {
   Modal,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors } from '../constants/Colors';
+import { Colors } from '@constants/Colors';
 import { useColorScheme } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import LottieView from 'lottie-react-native';
@@ -204,7 +204,7 @@ export default function SwipeScreen() {
           <BlurView intensity={40} tint="light" style={styles.matchCard}>
             <Text style={styles.matchTitle}>✨ It's a Match!</Text>
             <LottieView
-              source={require('../assets/animations/match.json')}
+              source={require('../../assets/animations/match.json')}
               autoPlay
               loop
               style={styles.lottie}
